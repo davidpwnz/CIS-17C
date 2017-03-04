@@ -39,7 +39,7 @@ int main(int argc, char** argv) {
    prntTab(tab1);
    cout<<"Copy Constructed Table 2 size is [row,col] = ["
            <<rows<<","<<cols<<"]";
-   //prntTab(tab2);
+   prntTab(tab2);
    cout<<"Operator Overloaded Table 3 size is [row,col] = ["
            <<rows<<","<<cols<<"]";
    //prntTab(tab3);

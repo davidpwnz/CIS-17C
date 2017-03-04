@@ -27,3 +27,7 @@ RowAray::RowAray(unsigned int cols) {
 RowAray::~RowAray() {
     delete [] rowData;
 }
+
+void RowAray::setData(int, int) {
+
+}
