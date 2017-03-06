@@ -28,6 +28,6 @@ RowAray::~RowAray() {
     delete [] rowData;
 }
 
-void RowAray::setData(int, int) {
-
+void RowAray::setData(int col, int data) {
+    rowData[col] = data;
 }

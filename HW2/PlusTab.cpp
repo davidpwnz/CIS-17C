@@ -12,15 +12,18 @@
  */
 
 #include <cstdlib>
+#include <iostream>
 #include "PlusTab.h"
+using namespace std;
 
 PlusTab PlusTab::operator+(const PlusTab &a) {
-	//Initialize a new Table
-	PlusTab sum(this->getSzRow(), this->getSzCol());
-	for (int row = 0;row<szRow;row++) {
-		for (int col = 0;col<szCol;col++) {
-			sum.columns[col]->setData(row, this->columns[col]->getData(row) + a.columns[col]->getData(row));
-		}
-	}
-	return sum;
+    //Initialize a new Table
+    PlusTab sum(a.getSzRow(), a.getSzCol());
+    for (int row = 0; row < szRow; row++) {
+        for (int col = 0; col < szCol; col++) { 
+            sum.setData( row, col, this->getData(row, col) + a.getData(row,col) );
+            //sum.columns[col]->setData(row, this->columns[col]->getData(row) + a.columns[col]->getData(row));
+        }
+    }
+    return sum;
 }

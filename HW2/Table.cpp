@@ -27,15 +27,18 @@ Table::Table(unsigned int rows, unsigned int cols) {
 }
 
 Table::Table(const Table& a) {
-	this->szRow = a.getSzRow();
+    this->szRow = a.getSzRow();
 
-	this->columns = new RowAray*[a.szRow];
+    this->columns = new RowAray*[a.szRow];
 
-	this->szCol = a.getSzCol();
+    this->szCol = a.getSzCol();
 
-	for (int i = 0; i < this->szRow; i++) {
-		this->columns[i] = a.columns[a.szCol];
-	}
+    for (int i = 0; i < this->szRow; i++) {
+        columns[i] = new RowAray(this->szCol);
+        for (int j = 0; j < this->szCol; j++) {
+            this->setData(i,j, a.getData(i,j));
+        }
+    }
 }
 
 Table::~Table() {
@@ -54,6 +57,7 @@ int Table::getData(int rows, int cols)const {
     }
 }
 
-void Table::setData(int, int, int) {
+void Table::setData(int row, int col, int data) {
+    columns[row]->setData( col, data );
 
 }
