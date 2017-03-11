@@ -4,40 +4,54 @@
 #include <iostream>
 #include <new>       // Needed for bad_alloc exception
 #include <cstdlib>   // Needed for the exit function
+#include "AbsRow.h"
 using namespace std;
 
 template <class T>
 class SimpleVector
 {
 private:
-   T *aptr;          // To point to the allocated array
-   int arraySize;    // Number of elements in the array
-   void memError();  // Handles memory allocation errors
-   void subError();  // Handles subscripts out of range
+	T *aptr;          // To point to the allocated array
+	int arraySize;    // Number of elements in the array
+	int usedSize;
+	void memError();  // Handles memory allocation errors
+	void subError();  // Handles subscripts out of range
 
 public:
-   // Default constructor
-   SimpleVector()
-      { aptr = 0; arraySize = 0;}
-      
-   // Constructor declaration
-   SimpleVector(int);
-   
-   // Copy constructor declaration
-   SimpleVector(const SimpleVector &);
-   
-   // Destructor declaration
-   ~SimpleVector();
-   
-   // Accessor to return the array size
-   int size() const
-      { return arraySize; }
+	// Default constructor
+	SimpleVector()
+	{
+		aptr = 0; arraySize = 0; usedSize = 0;
+	}
 
-   // Accessor to return a specific element
-   T getElementAt(int position);
+	// Constructor declaration
+	SimpleVector(int);
 
-   // Overloaded [] operator declaration
-   T &operator[](const int &);
+	// Copy constructor declaration
+	SimpleVector(const SimpleVector &);
+
+	// Destructor declaration
+	~SimpleVector();
+
+	// Accessor to return the array size
+	int size() const
+	{
+		return usedSize;
+	}
+	int allocated() const
+	{
+		return arraySize;
+	}
+
+	// Accessor to return a specific element
+	T getElementAt(int position);
+
+	// Overloaded [] operator declaration
+	T &operator[](const int &);
+
+	T push_back(T a);
+
+	bool pop_back();
 };
 
 //***********************************************************
@@ -48,20 +62,20 @@ public:
 template <class T>
 SimpleVector<T>::SimpleVector(int s)
 {
-   arraySize = s;
-   // Allocate memory for the array.
-   try
-   {
-      aptr = new T [s];
-   }
-   catch (bad_alloc)
-   {
-      memError();
-   }
+	arraySize = s;
+	// Allocate memory for the array.
+	try
+	{
+		aptr = new T[s];
+	}
+	catch (bad_alloc)
+	{
+		memError();
+	}
 
-   // Initialize the array.
-   for (int count = 0; count < arraySize; count++)
-      *(aptr + count) = 0;
+	// Initialize the array.
+	for (int count = 0; count < arraySize; count++)
+		*(aptr + count) = 0;
 }
 
 //*******************************************
@@ -71,17 +85,17 @@ SimpleVector<T>::SimpleVector(int s)
 template <class T>
 SimpleVector<T>::SimpleVector(const SimpleVector &obj)
 {
-   // Copy the array size.
-   arraySize = obj.arraySize;
-   
-   // Allocate memory for the array.
-   aptr = new T [arraySize];
-   if (aptr == 0)
-      memError();
-      
-   // Copy the elements of obj's array.
-   for(int count = 0; count < arraySize; count++)
-      *(aptr + count) = *(obj.aptr + count);
+	// Copy the array size.
+	arraySize = obj.arraySize;
+
+	// Allocate memory for the array.
+	aptr = new T[arraySize];
+	if (aptr == 0)
+		memError();
+
+	// Copy the elements of obj's array.
+	for (int count = 0; count < arraySize; count++)
+		*(aptr + count) = *(obj.aptr + count);
 }
 
 //**************************************
@@ -91,8 +105,8 @@ SimpleVector<T>::SimpleVector(const SimpleVector &obj)
 template <class T>
 SimpleVector<T>::~SimpleVector()
 {
-   if (arraySize > 0)
-      delete [] aptr;
+	if (arraySize > 0)
+		delete[] aptr;
 }
 
 //*******************************************************
@@ -103,8 +117,8 @@ SimpleVector<T>::~SimpleVector()
 template <class T>
 void SimpleVector<T>::memError()
 {
-   cout << "ERROR:Cannot allocate memory.\n";
-   exit(EXIT_FAILURE);
+	cout << "ERROR:Cannot allocate memory.\n";
+	exit(EXIT_FAILURE);
 }
 
 //***********************************************************
@@ -115,8 +129,8 @@ void SimpleVector<T>::memError()
 template <class T>
 void SimpleVector<T>::subError()
 {
-   cout << "ERROR: Subscript out of range.\n";
-   exit(EXIT_FAILURE);
+	cout << "ERROR: Subscript out of range.\n";
+	exit(EXIT_FAILURE);
 }
 
 //*******************************************************
@@ -128,9 +142,9 @@ void SimpleVector<T>::subError()
 template <class T>
 T SimpleVector<T>::getElementAt(int sub)
 {
-   if (sub < 0 || sub >= arraySize)
-      subError();
-   return aptr[sub];
+	if (sub < 0 || sub >= arraySize)
+		subError();
+	return aptr[sub];
 }
 
 //*******************************************************
@@ -142,8 +156,33 @@ T SimpleVector<T>::getElementAt(int sub)
 template <class T>
 T &SimpleVector<T>::operator[](const int &sub)
 {
-   if (sub < 0 || sub >= arraySize)
-      subError();
-   return aptr[sub];
+	if (sub < 0 || sub >= arraySize)
+		subError();
+	return aptr[sub];
+}
+
+template <class T>
+T SimpleVector<T>::push_back(T a) {
+	if (usedSize >= arraySize) {
+		T* temp = new T[(arraySize == 0 ? 1 : arraySize * 2)];
+		arraySize = (arraySize == 0 ? 1 : arraySize * 2);
+		for (int i = 0; i < usedSize; i++) {
+			temp[i] = aptr[i];
+		}
+		delete[] aptr;
+		temp[usedSize++] = a;
+		aptr = temp;
+	}
+	else {
+		aptr[usedSize++] = a;
+	}
+	return a;
+}
+
+template <class T>
+bool SimpleVector<T>::pop_back() {
+	if (usedSize == 0)return false;
+	aptr[--usedSize] = 0;
+	return true;
 }
 #endif
