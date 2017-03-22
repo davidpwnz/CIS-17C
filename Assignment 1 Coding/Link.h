@@ -1,8 +1,12 @@
 #ifndef LINK_H
 #define	LINK_H
+#include <cstdlib>
+using namespace std;
 
-struct Link{
-    int data;
+template <class T>
+class Link{
+public:
+    T data;
     Link *linkPtr;
 };
 
